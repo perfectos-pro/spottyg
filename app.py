@@ -59,16 +59,20 @@ def debug_token():
     try:
         user_info = sp.me()
         app.logger.info(f"Token debug successful for user: {user_info['id']}")
-    return jsonify(user_info)
+        return jsonify(user_info)
+    except Exception as e:
+        app.logger.error(f"Token debug failed: {str(e)}")
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/token_handoff")
 def token_handoff():
-    token_info = session.get("token_info")
-    if not token_info:
-        return jsonify({"error": "No token in session"}), 401
-    return jsonify(token_info)
+    try:
+        token_info = session.get("token_info")
+        if not token_info:
+            return jsonify({"error": "No token in session"}), 401
+        return jsonify(token_info)
     except Exception as e:
-        app.logger.error(f"Token debug failed: {str(e)}")
+        app.logger.error(f"Token handoff failed: {str(e)}")
         return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/search_track", methods=["GET"])
