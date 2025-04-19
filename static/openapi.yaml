@@ -2,70 +2,30 @@ openapi: 3.1.0
 info:
   title: Spotify GPT Agent
   version: 1.0.0
-paths:
-  /search_track:
-    get:
-      operationId: searchTrack
-      parameters:
-        - name: q
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Track search results
-  /search_album:
-    get:
-      operationId: searchAlbum
-      parameters:
-        - name: q
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Album search results
-  /get_playlists:
-    get:
-      operationId: getPlaylists
-      responses:
-        '200':
-          description: User playlists
-  /create_playlist:
-    post:
-      operationId: createPlaylist
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                description:
-                  type: string
-      responses:
-        '200':
-          description: Playlist created
-  /add_to_playlist:
-    post:
-      operationId: addToPlaylist
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                playlist_id:
-                  type: string
-                track_uris:
-                  type: array
-                  items:
-                    type: string
-      responses:
-        '200':
-          description: Tracks added to playlist
+servers:
+  - url: https://spottyg.onrender.com
+
+from flask import session, redirect
+
+@app.route("/login")
+def login():
+    auth_url = sp_oauth.get_authorize_url()
+    return redirect(auth_url)
+
+@app.route("/callback")
+def callback():
+    code = request.args.get('code')
+    token_info = sp_oauth.get_access_token(code)
+    session["token_info"] = token_info
+    return redirect("/")
+
+def get_spotify_client():
+    token_info = session.get("token_info")
+    if not token_info:
+        return redirect("/login")
+    if sp_oauth.is_token_expired(token_info):
+        token_info = sp_oauth.refresh_access_token(token_info["refresh_token"])
+        session["token_info"] = token_info
+    return spotipy.Spotify(auth=token_info["access_token"])
+
+sp = get_spotify_client()
