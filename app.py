@@ -19,6 +19,7 @@ def get_spotify_client():
     auth_header = request.headers.get("Authorization")
     if auth_header and auth_header.startswith("Bearer "):
         token = auth_header.split("Bearer ")[1]
+        app.logger.info("Token received via Authorization header")
         return spotipy.Spotify(auth=token)
     if not token_info:
         return None
@@ -29,15 +30,18 @@ def get_spotify_client():
 
 @app.route("/")
 def index():
+    app.logger.info("Request made to index endpoint")
     return "Spotify GPT Agent is live!"
 
 @app.route("/login")
 def login():
+    app.logger.info("Request made to login endpoint")
     auth_url = sp_oauth.get_authorize_url()
     return redirect(auth_url)
 
 @app.route("/callback")
 def callback():
+    app.logger.info("Request made to callback endpoint")
     code = request.args.get('code')
     if not code:
         app.logger.error("Missing authorization code in callback.")
@@ -53,6 +57,7 @@ def callback():
 
 @app.route("/debug_token")
 def debug_token():
+    app.logger.info("Request made to debug_token endpoint")
     sp = get_spotify_client()
     if not sp:
         return jsonify({"error": "No valid session or token"}), 401
@@ -66,6 +71,7 @@ def debug_token():
 
 @app.route("/token_handoff")
 def token_handoff():
+    app.logger.info("Request made to token_handoff endpoint")
     try:
         token_info = session.get("token_info")
         if not token_info:
@@ -77,6 +83,7 @@ def token_handoff():
 
 @app.route("/search_track", methods=["GET"])
 def search_track():
+    app.logger.info("Request made to search_track endpoint")
     sp = get_spotify_client()
     if not sp:
         return redirect("/login")
@@ -91,6 +98,7 @@ def search_track():
 
 @app.route("/search_album", methods=["GET"])
 def search_album():
+    app.logger.info("Request made to search_album endpoint")
     sp = get_spotify_client()
     if not sp:
         return redirect("/login")
@@ -105,6 +113,7 @@ def search_album():
 
 @app.route("/get_playlists", methods=["GET"])
 def get_playlists():
+    app.logger.info("Request made to get_playlists endpoint")
     sp = get_spotify_client()
     if not sp:
         return redirect("/login")
@@ -118,6 +127,7 @@ def get_playlists():
 
 @app.route("/create_playlist", methods=["POST"])
 def create_playlist():
+    app.logger.info("Request made to create_playlist endpoint")
     sp = get_spotify_client()
     if not sp:
         return redirect("/login")
@@ -143,6 +153,7 @@ def create_playlist():
 
 @app.route("/add_to_playlist", methods=["POST"])
 def add_to_playlist():
+    app.logger.info("Request made to add_to_playlist endpoint")
     sp = get_spotify_client()
     if not sp:
         return redirect("/login")
@@ -159,4 +170,5 @@ def add_to_playlist():
 
 @app.route("/openapi.yaml")
 def serve_openapi_yaml():
+    app.logger.info("Request made to serve_openapi_yaml endpoint")
     return app.send_static_file("openapi.yaml")

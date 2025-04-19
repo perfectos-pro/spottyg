@@ -10,8 +10,10 @@ paths:
       operationId: searchTrack
       description: >
         Searches for a track in the Spotify catalog. 
-        Requires a valid token from https://spottyg.onrender.com/token_handoff 
-        passed in the Authorization header as 'Bearer YOUR_TOKEN_HERE'.
+        This endpoint requires a bearer token from the token handoff process.
+        Authenticate by visiting https://spottyg.onrender.com/login,
+        then retrieve your token at https://spottyg.onrender.com/token_handoff.
+        Paste the token into the GPT when prompted.
       parameters:
         - name: q
           in: query
@@ -39,8 +41,10 @@ paths:
       operationId: searchAlbum
       description: >
         Searches for an album in the Spotify catalog. 
-        Requires a valid token from https://spottyg.onrender.com/token_handoff 
-        passed in the Authorization header as 'Bearer YOUR_TOKEN_HERE'.
+        This endpoint requires a bearer token from the token handoff process.
+        Authenticate by visiting https://spottyg.onrender.com/login,
+        then retrieve your token at https://spottyg.onrender.com/token_handoff.
+        Paste the token into the GPT when prompted.
       parameters:
         - name: q
           in: query
@@ -68,8 +72,10 @@ paths:
       operationId: getPlaylists
       description: >
         Retrieves the user's playlists from their Spotify account. 
-        Requires a valid token from https://spottyg.onrender.com/token_handoff 
-        passed in the Authorization header as 'Bearer YOUR_TOKEN_HERE'.
+        This endpoint requires a bearer token from the token handoff process.
+        Authenticate by visiting https://spottyg.onrender.com/login,
+        then retrieve your token at https://spottyg.onrender.com/token_handoff.
+        Paste the token into the GPT when prompted.
       responses:
         '200':
           description: User playlists
@@ -91,8 +97,10 @@ paths:
       operationId: createPlaylist
       description: >
         Creates a new playlist in the user's Spotify account. 
-        Requires a valid token from https://spottyg.onrender.com/token_handoff 
-        passed in the Authorization header as 'Bearer YOUR_TOKEN_HERE'.
+        This endpoint requires a bearer token from the token handoff process.
+        Authenticate by visiting https://spottyg.onrender.com/login,
+        then retrieve your token at https://spottyg.onrender.com/token_handoff.
+        Paste the token into the GPT when prompted.
       requestBody:
         required: true
         content:
@@ -118,8 +126,10 @@ paths:
       operationId: addToPlaylist
       description: >
         Adds tracks to an existing playlist in the user's Spotify account. 
-        Requires a valid token from https://spottyg.onrender.com/token_handoff 
-        passed in the Authorization header as 'Bearer YOUR_TOKEN_HERE'.
+        This endpoint requires a bearer token from the token handoff process.
+        Authenticate by visiting https://spottyg.onrender.com/login,
+        then retrieve your token at https://spottyg.onrender.com/token_handoff.
+        Paste the token into the GPT when prompted.
       requestBody:
         required: true
         content:
