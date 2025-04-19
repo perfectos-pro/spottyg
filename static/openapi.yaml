@@ -83,6 +83,7 @@ components:
             playlist-read-private: Access private playlists
             playlist-modify-private: Modify private playlists
             playlist-modify-public: Modify public playlists
+  schemas: {}
 security:
   - spotifyOAuth:
       - playlist-read-private
