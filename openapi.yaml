@@ -1,0 +1,71 @@
+openapi: 3.0.0
+info:
+  title: Spotify GPT Agent
+  version: 1.0.0
+paths:
+  /search_track:
+    get:
+      operationId: searchTrack
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Track search results
+  /search_album:
+    get:
+      operationId: searchAlbum
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Album search results
+  /get_playlists:
+    get:
+      operationId: getPlaylists
+      responses:
+        '200':
+          description: User playlists
+  /create_playlist:
+    post:
+      operationId: createPlaylist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Playlist created
+  /add_to_playlist:
+    post:
+      operationId: addToPlaylist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                playlist_id:
+                  type: string
+                track_uris:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Tracks added to playlist
