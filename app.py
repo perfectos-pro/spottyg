@@ -72,8 +72,16 @@ def create_playlist():
     data = request.json
     name = data.get("name")
     description = data.get("description", "")
+    public = data.get("public", False)
+    collaborative = data.get("collaborative", False)
     user_id = sp.me()["id"]
-    new_playlist = sp.user_playlist_create(user=user_id, name=name, description=description)
+    new_playlist = sp.user_playlist_create(
+        user=user_id,
+        name=name,
+        description=description,
+        public=public,
+        collaborative=collaborative
+    )
     return jsonify(new_playlist)
 
 @app.route("/add_to_playlist", methods=["POST"])

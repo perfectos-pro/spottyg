@@ -49,6 +49,10 @@ paths:
                   type: string
                 description:
                   type: string
+                public:
+                  type: boolean
+                collaborative:
+                  type: boolean
       responses:
         '200':
           description: Playlist created
