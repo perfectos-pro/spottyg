@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, session, redirect
 import spotipy
+import traceback
 from spotipy.oauth2 import SpotifyOAuth
 import os
 
@@ -34,9 +35,30 @@ def login():
 @app.route("/callback")
 def callback():
     code = request.args.get('code')
-    token_info = sp_oauth.get_access_token(code)
-    session["token_info"] = token_info
-    return redirect("/")
+    if not code:
+        app.logger.error("Missing authorization code in callback.")
+        return jsonify({"error": "Missing authorization code"}), 400
+    try:
+        token_info = sp_oauth.get_access_token(code)
+        session["token_info"] = token_info
+        app.logger.info("Spotify token acquired and stored in session.")
+        return redirect("/")
+    except Exception as e:
+        app.logger.error(f"Token exchange failed: {str(e)}")
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
+
+@app.route("/debug_token")
+def debug_token():
+    sp = get_spotify_client()
+    if not sp:
+        return jsonify({"error": "No valid session or token"}), 401
+    try:
+        user_info = sp.me()
+        app.logger.info(f"Token debug successful for user: {user_info['id']}")
+        return jsonify(user_info)
+    except Exception as e:
+        app.logger.error(f"Token debug failed: {str(e)}")
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/search_track", methods=["GET"])
 def search_track():
@@ -50,7 +72,7 @@ def search_track():
         return jsonify(results)
     except Exception as e:
         app.logger.error(f"Error searching track '{query}': {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/search_album", methods=["GET"])
 def search_album():
@@ -64,7 +86,7 @@ def search_album():
         return jsonify(results)
     except Exception as e:
         app.logger.error(f"Error searching album '{query}': {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/get_playlists", methods=["GET"])
 def get_playlists():
@@ -77,7 +99,7 @@ def get_playlists():
         return jsonify(playlists)
     except Exception as e:
         app.logger.error(f"Error retrieving playlists: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/create_playlist", methods=["POST"])
 def create_playlist():
@@ -102,7 +124,7 @@ def create_playlist():
         return jsonify(new_playlist)
     except Exception as e:
         app.logger.error(f"Error creating playlist: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/add_to_playlist", methods=["POST"])
 def add_to_playlist():
@@ -118,7 +140,7 @@ def add_to_playlist():
         return jsonify(result)
     except Exception as e:
         app.logger.error(f"Error adding to playlist '{playlist_id}': {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
 
 @app.route("/openapi.yaml")
 def serve_openapi_yaml():
