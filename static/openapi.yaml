@@ -148,21 +148,3 @@ paths:
           description: Tracks added to playlist
         '500':
           description: Error adding to playlist
-components:
-  securitySchemes:
-    spotifyOAuth:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: https://accounts.spotify.com/authorize
-          tokenUrl: https://accounts.spotify.com/api/token
-          scopes:
-            playlist-read-private: Access private playlists
-            playlist-modify-private: Modify private playlists
-            playlist-modify-public: Modify public playlists
-  schemas: {}
-security:
-  - spotifyOAuth:
-      - playlist-read-private
-      - playlist-modify-private
-      - playlist-modify-public
