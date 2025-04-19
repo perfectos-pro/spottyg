@@ -44,8 +44,13 @@ def search_track():
     if not sp:
         return redirect("/login")
     query = request.args.get("q")
-    results = sp.search(q=query, type="track", limit=5)
-    return jsonify(results)
+    try:
+        results = sp.search(q=query, type="track", limit=5)
+        app.logger.info(f"Search track: {query}")
+        return jsonify(results)
+    except Exception as e:
+        app.logger.error(f"Error searching track '{query}': {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/search_album", methods=["GET"])
 def search_album():
@@ -53,16 +58,26 @@ def search_album():
     if not sp:
         return redirect("/login")
     query = request.args.get("q")
-    results = sp.search(q=query, type="album", limit=5)
-    return jsonify(results)
+    try:
+        results = sp.search(q=query, type="album", limit=5)
+        app.logger.info(f"Search album: {query}")
+        return jsonify(results)
+    except Exception as e:
+        app.logger.error(f"Error searching album '{query}': {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/get_playlists", methods=["GET"])
 def get_playlists():
     sp = get_spotify_client()
     if not sp:
         return redirect("/login")
-    playlists = sp.current_user_playlists()
-    return jsonify(playlists)
+    try:
+        playlists = sp.current_user_playlists()
+        app.logger.info("Retrieved user playlists")
+        return jsonify(playlists)
+    except Exception as e:
+        app.logger.error(f"Error retrieving playlists: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/create_playlist", methods=["POST"])
 def create_playlist():
@@ -74,15 +89,20 @@ def create_playlist():
     description = data.get("description", "")
     public = data.get("public", False)
     collaborative = data.get("collaborative", False)
-    user_id = sp.me()["id"]
-    new_playlist = sp.user_playlist_create(
-        user=user_id,
-        name=name,
-        description=description,
-        public=public,
-        collaborative=collaborative
-    )
-    return jsonify(new_playlist)
+    try:
+        user_id = sp.me()["id"]
+        new_playlist = sp.user_playlist_create(
+            user=user_id,
+            name=name,
+            description=description,
+            public=public,
+            collaborative=collaborative
+        )
+        app.logger.info(f"Created playlist for user {user_id}: {new_playlist['id']}")
+        return jsonify(new_playlist)
+    except Exception as e:
+        app.logger.error(f"Error creating playlist: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/add_to_playlist", methods=["POST"])
 def add_to_playlist():
@@ -92,8 +112,13 @@ def add_to_playlist():
     data = request.json
     playlist_id = data["playlist_id"]
     track_uris = data["track_uris"]
-    result = sp.playlist_add_items(playlist_id, track_uris)
-    return jsonify(result)
+    try:
+        result = sp.playlist_add_items(playlist_id, track_uris)
+        app.logger.info(f"Added tracks to playlist {playlist_id}: {track_uris}")
+        return jsonify(result)
+    except Exception as e:
+        app.logger.error(f"Error adding to playlist '{playlist_id}': {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/openapi.yaml")
 def serve_openapi_yaml():

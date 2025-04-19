@@ -17,6 +17,19 @@ paths:
       responses:
         '200':
           description: Track search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                  error:
+                    type: string
+        '500':
+          description: Error searching track
   /search_album:
     get:
       operationId: searchAlbum
@@ -29,12 +42,38 @@ paths:
       responses:
         '200':
           description: Album search results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                  error:
+                    type: string
+        '500':
+          description: Error searching album
   /get_playlists:
     get:
       operationId: getPlaylists
       responses:
         '200':
           description: User playlists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  playlists:
+                    type: array
+                    items:
+                      type: object
+                  error:
+                    type: string
+        '500':
+          description: Error retrieving playlists
   /create_playlist:
     post:
       operationId: createPlaylist
@@ -56,6 +95,8 @@ paths:
       responses:
         '200':
           description: Playlist created
+        '500':
+          description: Error creating playlist
   /add_to_playlist:
     post:
       operationId: addToPlaylist
@@ -75,6 +116,8 @@ paths:
       responses:
         '200':
           description: Tracks added to playlist
+        '500':
+          description: Error adding to playlist
 components:
   securitySchemes:
     spotifyOAuth:
