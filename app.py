@@ -16,6 +16,10 @@ sp_oauth = SpotifyOAuth(
 
 def get_spotify_client():
     token_info = session.get("token_info")
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split("Bearer ")[1]
+        return spotipy.Spotify(auth=token)
     if not token_info:
         return None
     if sp_oauth.is_token_expired(token_info):
@@ -55,7 +59,14 @@ def debug_token():
     try:
         user_info = sp.me()
         app.logger.info(f"Token debug successful for user: {user_info['id']}")
-        return jsonify(user_info)
+    return jsonify(user_info)
+
+@app.route("/token_handoff")
+def token_handoff():
+    token_info = session.get("token_info")
+    if not token_info:
+        return jsonify({"error": "No token in session"}), 401
+    return jsonify(token_info)
     except Exception as e:
         app.logger.error(f"Token debug failed: {str(e)}")
         return jsonify({"error": str(e), "details": traceback.format_exc()}), 500
